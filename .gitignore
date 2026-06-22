@@ -1,0 +1,11 @@
+# Node / build tooling
+node_modules/
+
+# Composer
+vendor/
+
+# Editor / OS cruft
+.DS_Store
+*.swp
+.idea/
+.vscode/
