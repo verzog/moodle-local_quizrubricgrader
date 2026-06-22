@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_quizrubricgrader';
-$plugin->version   = 2026062200;
+$plugin->version   = 2026062201;
 $plugin->requires  = 2025041400; // Moodle 5.0.
 $plugin->supported = [500, 501];  // Moodle 5.0 - 5.1.
 $plugin->maturity  = MATURITY_STABLE;

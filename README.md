@@ -69,21 +69,24 @@ into line with the project's `CLAUDE.md` conventions; they are intentionally
 deferred so that each can be reviewed as a focused change.
 
 - **Stage 1 — Plugin conversion (this release).** Plugin laid out at the
-  repository root; JavaScript packaged as an AMD module
-  (`amd/src/grader.js` + built `amd/build/grader.min.js`) loaded via
-  `js_call_amd`; stylesheet served through Moodle's CSS aggregation (the old
-  JS link-injection hack removed); debug console output silenced; Moodle 5.0 /
-  PHP 8.2 baseline; standard Moodle GPL headers and docblocks; privacy
-  provider; and a GitHub Actions CI workflow.
+  repository root; JavaScript rewritten as a Moodle ES6 module
+  (`amd/src/grader.js`) and built to `amd/build/grader.min.js` with Moodle's
+  grunt/rollup pipeline, loaded via `js_call_amd`; stylesheet served through
+  Moodle's CSS aggregation (the old JS link-injection hack removed) and scoped
+  to `body.rs-grading-page` so non-grading pages are untouched; debug console
+  output silenced; Moodle 5.0 / PHP 8.2 baseline; standard Moodle GPL headers
+  and docblocks; privacy provider; and a GitHub Actions CI workflow. The full
+  moodle-plugin-ci suite — including `grunt` (ESLint + Stylelint + AMD build)
+  and `behat` — passes.
 - **Stage 2 — Internationalisation & Australian locale.** Extract every
   user-facing string in `grader.js` into `lang/en` and render it via
   `core/str`; apply AU/UK spelling throughout; route any dates through
   `userdate()`.
-- **Stage 3 — JS/CSS build pipeline & linting.** Make the plugin pass the
-  (now-enabled) `grunt` CI step: produce the official grunt-generated AMD
-  build, remove the ~150 retained `self.log()` call sites so the source passes
-  ESLint, and refactor the `!important`-heavy CSS to pass Stylelint. Until this
-  lands, the `grunt` job is expected to fail.
+- **Stage 3 — Residual JS cleanup.** The `grunt` pipeline (ESLint, Stylelint,
+  rollup build) now passes. Remaining tidy-ups: remove the ~150 retained no-op
+  `self.log()` debug call sites, and reduce the cyclomatic complexity of the
+  two HTML-summary builder functions so the targeted `eslint-disable` blocks
+  (`complexity`, `max-depth`, `max-len`, etc.) can be dropped.
 - **Stage 4 — Hooks API migration.** Replace the legacy
   `before_http_headers` callback in `lib.php` with the Moodle 5.x Hooks API.
 - **Stage 5 — Security hardening.** Replace the `innerHTML` / jQuery `.html()`
