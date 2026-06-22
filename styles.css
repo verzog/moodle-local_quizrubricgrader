@@ -1,0 +1,634 @@
+/* Rubric Grader - Super Visible Styles */
+
+/* Make cells obviously clickable */
+body.rs-grading-page .rs-cell {
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    border: 3px solid transparent;
+}
+
+/* HOVER STATE - Bright blue glow */
+body.rs-grading-page .rs-cell:hover,
+body.rs-grading-page .rs-cell.rs-hover {
+    background-color: #bbdefb;
+    border-color: #2196f3;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+    transform: scale(1.03);
+    z-index: 10;
+}
+
+/* SELECTED STATE - Dark blue with white text */
+body.rs-grading-page .rs-cell.rs-selected {
+    background-color: #1565c0;
+    color: #fff;
+    font-weight: bold;
+    border-color: #0d47a1;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(21, 101, 192, 0.6);
+    transform: scale(1.02);
+    z-index: 5;
+}
+
+/* Extra emphasis on selected cells */
+body.rs-grading-page .rs-cell.rs-selected::before {
+    content: "✓ ";
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Table improvements */
+body.rs-grading-page .rs-table {
+    border-collapse: separate;
+    border-spacing: 3px;
+}
+
+body.rs-grading-page .rs-table td {
+    padding: 12px;
+}
+
+/* Criterion column styling */
+body.rs-grading-page .rs-table td:first-child {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+/* Header row */
+body.rs-grading-page .rs-table th {
+    background-color: #e3f2fd;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Feedback summary in comment area */
+body.rs-grading-page .rs-summary {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+}
+
+body.rs-grading-page .rs-summary p {
+    margin: 10px 0;
+}
+
+body.rs-grading-page .rs-summary strong {
+    color: #1565c0;
+}
+
+body.rs-grading-page .rs-summary ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 15px 0;
+}
+
+body.rs-grading-page .rs-summary li {
+    margin: 12px 0;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-left: 4px solid #1565c0;
+    line-height: 1.6;
+}
+
+body.rs-grading-page .rs-summary li strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.05em;
+}
+
+/* Make it super obvious when hovering over the whole table */
+body.rs-grading-page .rs-table:hover {
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.2);
+}
+
+/* Add visual feedback that cells are interactive */
+body.rs-grading-page .rs-cell::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 12px 12px 0;
+    border-color: transparent #90caf9 transparent transparent;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+body.rs-grading-page .rs-cell:hover::after {
+    opacity: 1;
+}
+
+/* Remove the corner indicator when selected */
+body.rs-grading-page .rs-cell.rs-selected::after {
+    display: none;
+}
+
+/* Force TinyMCE editor to be taller - 60 lines for full table */
+/* Only apply on grading pages where we add the rs-grading-page class */
+body.rs-grading-page .tox-edit-area {
+    min-height: 1575px;
+}
+
+body.rs-grading-page .tox-edit-area iframe {
+    min-height: 1575px;
+}
+
+/* Force regular textareas to be taller - 60 lines */
+/* Only apply on grading pages */
+body.rs-grading-page textarea[name*="comment"] {
+    min-height: 1575px;
+    height: 1575px;
+}
+
+/* Rubric feedback table in comments */
+body.rs-grading-page .rs-feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.9em;
+}
+
+body.rs-grading-page .rs-feedback-table th {
+    background-color: #e3f2fd;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #999;
+}
+
+body.rs-grading-page .rs-feedback-table td {
+    padding: 8px;
+    border: 1px solid #999;
+    vertical-align: top;
+}
+
+body.rs-grading-page .rs-feedback-table tr:first-child th:first-child {
+    text-align: left;
+}
+
+body.rs-grading-page .rs-feedback-table tr td:first-child {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+/* Score breakdown display */
+body.rs-grading-page .rs-score-display {
+    background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+    color: white;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+}
+
+body.rs-grading-page .rs-score-total {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+body.rs-grading-page .rs-score-label {
+    opacity: 0.9;
+}
+
+body.rs-grading-page .rs-score-value {
+    font-size: 1.3em;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 5px 15px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+body.rs-grading-page .rs-score-breakdown-toggle {
+    text-align: center;
+    cursor: pointer;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin: 10px 0;
+    transition: background-color 0.2s;
+}
+
+body.rs-grading-page .rs-score-breakdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+body.rs-grading-page #rs-breakdown-detail {
+    margin-top: 15px;
+}
+
+body.rs-grading-page .rs-breakdown-table {
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+body.rs-grading-page .rs-breakdown-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #333;
+}
+
+body.rs-grading-page .rs-breakdown-table tr:last-child td {
+    border-bottom: none;
+}
+
+body.rs-grading-page .rs-breakdown-criterion {
+    font-weight: 600;
+    color: #1565c0;
+}
+
+body.rs-grading-page .rs-breakdown-score {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #1565c0;
+}
+
+body.rs-grading-page .rs-note {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+    font-size: 0.9em;
+    text-align: center;
+    font-style: italic;
+}
+
+/* ============================================================
+   MARKING GUIDE TABLE STYLES (rs-marking-guide)
+   ============================================================ */
+
+body.rs-grading-page .rs-marking-guide {
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    width: 100%;
+}
+
+body.rs-grading-page .rs-marking-guide tr.rs-criterion-row td {
+    border: 1px solid #cfd8dc;
+    vertical-align: middle;
+    padding: 10px 14px;
+    background-color: #fff;
+}
+
+body.rs-grading-page .rs-marking-guide td.rs-criterion-label-cell {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    width: 60%;
+    vertical-align: top;
+    padding-top: 12px;
+}
+
+body.rs-grading-page .rs-criterion-label {
+    display: block;
+    font-weight: 700;
+    color: #1a237e;
+    margin-bottom: 4px;
+}
+
+body.rs-grading-page .rs-criterion-desc {
+    display: block;
+    font-weight: normal;
+    font-size: 0.88em;
+    color: #555;
+    line-height: 1.45;
+}
+
+body.rs-grading-page .rs-marking-guide td.rs-max-cell {
+    width: 120px;
+    text-align: center;
+    background-color: #e8eaf6;
+    vertical-align: middle;
+}
+
+body.rs-grading-page .rs-max-cell label {
+    display: block;
+    font-size: 0.78em;
+    color: #3949ab;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+body.rs-grading-page .rs-max-input {
+    width: 85px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #3949ab;
+    border: 2px solid #9fa8da;
+    border-radius: 5px;
+    padding: 4px 6px;
+    background: #dde3f5;
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
+body.rs-grading-page .rs-marking-guide td.rs-score-cell {
+    width: 170px;
+    text-align: center;
+    background-color: #e3f2fd;
+    vertical-align: middle;
+}
+
+body.rs-grading-page .rs-score-cell label {
+    display: block;
+    font-size: 0.78em;
+    color: #1565c0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+body.rs-grading-page .rs-score-input {
+    width: 85px;
+    text-align: center;
+    font-size: 1.15em;
+    font-weight: bold;
+    color: #0d47a1;
+    border: 2px solid #90caf9;
+    border-radius: 5px;
+    padding: 4px 6px;
+    background: #fff;
+    cursor: text;
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+body.rs-grading-page .rs-score-input:focus {
+    outline: 2px solid #1565c0;
+    border-color: #1565c0;
+    box-shadow: 0 0 8px rgba(21, 101, 192, 0.4);
+}
+
+body.rs-grading-page .rs-confirm-btn {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 12px;
+    background: #90caf9;
+    color: #0d47a1;
+    font-weight: 700;
+    font-size: 0.82em;
+    border-radius: 4px;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.6;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body.rs-grading-page .rs-confirm-btn:hover {
+    background: #1565c0;
+    color: white;
+}
+
+body.rs-grading-page .rs-confirm-btn--dirty {
+    background: #ff9800;
+    color: white;
+    animation: rs-pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes rs-pulse {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0.6;
+    }
+}
+
+body.rs-grading-page .rs-confirm-btn--done {
+    background: #43a047;
+    color: white;
+    animation: none;
+}
+
+body.rs-grading-page .rs-marking-guide tr.rs-row-confirmed td.rs-score-cell {
+    background-color: #e8f5e9;
+}
+
+body.rs-grading-page .rs-marking-guide thead th {
+    background-color: #1565c0;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 14px;
+    border: none;
+}
+
+body.rs-grading-page .rs-marking-guide thead th:first-child {
+    text-align: left;
+}
+
+body.rs-grading-page .rs-marking-guide tr.rs-total-row td {
+    background-color: #1565c0;
+    color: white;
+    font-weight: bold;
+    font-size: 1.05em;
+    padding: 10px 14px;
+    border: none;
+}
+
+body.rs-grading-page .rs-marking-guide .rs-total-label {
+    text-align: right;
+}
+body.rs-grading-page .rs-marking-guide .rs-total-value {
+    text-align: center;
+}
+
+/* ============================================================
+   RESCALE WIDGET
+   ============================================================ */
+body.rs-grading-page .rs-rescale-wrap {
+    margin-top: 0;
+    border: 1px solid #e0e7ff;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    background: #f8faff;
+    padding: 12px 16px;
+}
+
+body.rs-grading-page .rs-rescale-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+body.rs-grading-page .rs-rescale-label {
+    font-weight: 700;
+    font-size: 0.9em;
+    color: #3730a3;
+}
+
+body.rs-grading-page .rs-rescale-hint {
+    font-size: 0.82em;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+body.rs-grading-page .rs-rescale-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+body.rs-grading-page .rs-rescale-field-label {
+    font-size: 0.85em;
+    color: #374151;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+body.rs-grading-page .rs-rescale-max {
+    width: 90px;
+    border: 1px solid #c7d2fe;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+body.rs-grading-page .rs-rescale-max:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+body.rs-grading-page .rs-rescale-btn {
+    background: #4f46e5;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 16px;
+    font-size: 0.88em;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+body.rs-grading-page .rs-rescale-btn:hover {
+    background: #4338ca;
+}
+
+body.rs-grading-page .rs-rescale-result {
+    font-size: 0.92em;
+    color: #374151;
+    background: #fff;
+    border: 1px solid #e0e7ff;
+    border-radius: 4px;
+    padding: 4px 10px;
+}
+
+body.rs-grading-page .rs-rescale-value {
+    color: #1a56db;
+    font-size: 1.05em;
+}
+
+
+/* ============================================================
+   CELL SCORE BADGE
+   ============================================================ */
+body.rs-grading-page .rs-cell-score-badge {
+    display: block;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: #1a237e;
+    margin-bottom: 4px;
+}
+
+body.rs-grading-page .rs-cell.rs-selected .rs-cell-score-badge {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* ============================================================
+   SPLIT VIEW
+   ============================================================ */
+body.rs-grading-page .rs-split-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a56db;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 16px;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(26, 86, 219, 0.3);
+}
+body.rs-grading-page .rs-split-toggle:hover {
+    background: #1e40af;
+}
+
+/* When split is active, push page content to the right two-thirds */
+body.rs-split-active {
+    margin-left: 33.333vw;
+    width: 66.666vw;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* Left panel — fixed, holds the student response iframe (one third) */
+body.rs-grading-page #rs-split-left-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 33.333vw;
+    height: 100vh;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    border-right: 4px solid #1a56db;
+    background: #fff;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
+}
+
+body.rs-grading-page .rs-split-left-bar {
+    background: #1a56db;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 18px;
+    flex-shrink: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body.rs-grading-page .rs-split-left-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    min-height: 0;
+}
+
+/* Push TinyMCE dialogs/popups away from the left panel when split is active */
+body.rs-split-active .tox-dialog-wrap,
+body.rs-split-active .tox-tinymce-aux,
+body.rs-split-active .mce-container,
+body.rs-split-active .mce-window,
+body.rs-split-active .tox-pop,
+body.rs-split-active .tox-toolbar-overlord {
+    margin-left: 33.333vw;
+}
+/* TinyMCE floating toolbar and dialogs — shift right of left panel */
+body.rs-split-active .tox-dialog {
+    margin-left: 16.666vw; /* centres dialog in right 2/3 */
+}
+
