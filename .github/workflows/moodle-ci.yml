@@ -1,23 +1,28 @@
-name: Moodle Plugin CI
+name: moodle-ci
 
 on:
   push:
     branches:
       - main
-      - 'claude/**'
   pull_request:
 
-# Australian timezone so date/time tests respect AEST/AWST offsets.
 env:
   TZ: Australia/Sydney
 
+concurrency:
+  group: moodle-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
-        image: postgres:14
+        # Pinned to a specific patch tag for reproducibility; swap to an
+        # immutable digest (postgres:16@sha256:...) if you want stricter
+        # pinning.
+        image: postgres:16.6
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -28,40 +33,30 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 3
-      mariadb:
-        image: mariadb:10.11
+      mysql:
+        image: mysql:8.4.3
         env:
-          MYSQL_USER: 'root'
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-          MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
-          MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-cmd="mysqladmin ping"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 3
-
+          --health-retries 5
+          --health-start-period 30s
     strategy:
       fail-fast: false
       matrix:
-        include:
+        php: ['8.2', '8.3', '8.4']
+        moodle-branch: ['MOODLE_500_STABLE', 'MOODLE_501_STABLE', 'MOODLE_502_STABLE', 'main']
+        database: ['pgsql', 'mysqli']
+        exclude:
+          # Moodle 5.2+ requires PHP 8.3 or newer.
           - php: '8.2'
-            moodle-branch: 'MOODLE_500_STABLE'
-            database: 'pgsql'
+            moodle-branch: 'MOODLE_502_STABLE'
           - php: '8.2'
-            moodle-branch: 'MOODLE_500_STABLE'
-            database: 'mysqli'
-          - php: '8.3'
-            moodle-branch: 'MOODLE_501_STABLE'
-            database: 'pgsql'
-          - php: '8.3'
-            moodle-branch: 'MOODLE_501_STABLE'
-            database: 'mysqli'
-          - php: '8.4'
-            moodle-branch: 'MOODLE_501_STABLE'
-            database: 'pgsql'
+            moodle-branch: 'main'
 
     steps:
       - name: Check out repository code
@@ -78,51 +73,70 @@ jobs:
 
       - name: Initialise moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          attempts=0
+          until composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4; do
+            attempts=$((attempts + 1))
+            if [ $attempts -ge 3 ]; then
+              echo "composer create-project failed after $attempts attempts" >&2
+              exit 1
+            fi
+            echo "composer create-project attempt $attempts failed, retrying..."
+            rm -rf ci
+            sleep $((attempts * 5))
+          done
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
-
+          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
       - name: Install moodle-plugin-ci
-        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        id: install
+        run: |
+          attempts=0
+          until moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1; do
+            attempts=$((attempts + 1))
+            if [ $attempts -ge 3 ]; then
+              echo "moodle-plugin-ci install failed after $attempts attempts" >&2
+              exit 1
+            fi
+            echo "moodle-plugin-ci install attempt $attempts failed, retrying..."
+            sleep $((attempts * 10))
+          done
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
       - name: PHP Lint
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
         run: moodle-plugin-ci phplint
 
-      - name: PHP Mess Detector
-        continue-on-error: true
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpmd
-
       - name: Moodle Code Checker
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
         run: moodle-plugin-ci phpcs --max-warnings 0
 
       - name: Moodle PHPDoc Checker
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
         run: moodle-plugin-ci phpdoc --max-warnings 0
 
       - name: Validating
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
         run: moodle-plugin-ci validate
 
       - name: Check upgrade savepoints
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
         run: moodle-plugin-ci savepoints
 
       - name: Mustache Lint
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
         run: moodle-plugin-ci mustache
 
+      - name: Grunt
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
+        run: moodle-plugin-ci grunt --max-lint-warnings 0
+
       - name: PHPUnit tests
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
         run: moodle-plugin-ci phpunit --fail-on-warning
 
-      # NOTE: The `grunt` (JS/CSS build verification + ESLint/Stylelint) and
-      # `behat` steps are intentionally omitted in this first pass. See the
-      # "Development roadmap" in README.md (Stages 3 and 6) for the work
-      # required to re-enable them.
+      - name: Behat features
+        if: ${{ !cancelled() && steps.install.conclusion == 'success' }}
+        run: moodle-plugin-ci behat --profile chrome

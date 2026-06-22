@@ -79,11 +79,11 @@ deferred so that each can be reviewed as a focused change.
   user-facing string in `grader.js` into `lang/en` and render it via
   `core/str`; apply AU/UK spelling throughout; route any dates through
   `userdate()`.
-- **Stage 3 — JS/CSS build pipeline & linting.** Wire up the Moodle `grunt`
-  toolchain to produce the official AMD build, remove the ~150 retained
-  `self.log()` call sites so the source passes ESLint, refactor the
-  `!important`-heavy CSS to pass Stylelint, and re-enable the `grunt` step in
-  CI.
+- **Stage 3 — JS/CSS build pipeline & linting.** Make the plugin pass the
+  (now-enabled) `grunt` CI step: produce the official grunt-generated AMD
+  build, remove the ~150 retained `self.log()` call sites so the source passes
+  ESLint, and refactor the `!important`-heavy CSS to pass Stylelint. Until this
+  lands, the `grunt` job is expected to fail.
 - **Stage 4 — Hooks API migration.** Replace the legacy
   `before_http_headers` callback in `lib.php` with the Moodle 5.x Hooks API.
 - **Stage 5 — Security hardening.** Replace the `innerHTML` / jQuery `.html()`
@@ -91,7 +91,7 @@ deferred so that each can be reviewed as a focused change.
   and sanitise rubric-derived content before injection.
 - **Stage 6 — Automated tests.** Add PHPUnit coverage for the page-detection
   logic in `lib.php` and Behat acceptance tests for the grading workflow
-  (using DD/MM/YYYY dates), then re-enable the `behat` step in CI.
+  (using DD/MM/YYYY dates) to exercise the (now-enabled) `behat` CI step.
 - **Stage 7 — Configurability & capabilities.** Add admin settings (page
   matching, colours, editor auto-expand height) and a capability controlling
   who sees the grader.

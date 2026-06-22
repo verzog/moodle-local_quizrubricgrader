@@ -12,7 +12,8 @@
 - Baseline raised to Moodle 5.0+ / PHP 8.2+.
 - Added standard Moodle GPL headers and PHPDoc blocks across all PHP files.
 - Added a GitHub Actions CI workflow (PHP 8.2–8.4, pgsql + mysqli, Moodle
-  5.0/5.1, timezone Australia/Sydney).
+  5.0/5.1/5.2 + main, timezone Australia/Sydney) running the full
+  moodle-plugin-ci suite, including grunt and behat.
 
 ## 1.0 (2026-02-05)
 
